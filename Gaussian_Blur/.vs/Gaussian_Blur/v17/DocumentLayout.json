@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "C:\\Users\\wiede\\Documents\\Fachhochschule Master\\2. Semester\\High Performance Computing\\Project Simple Gaussian\\opencl-simple-gaussian-blur\\Gaussian_Blur\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{35FFF216-B276-40F7-AE91-6CBEE7803FAD}|Gaussian_Blur.csproj|c:\\users\\wiede\\documents\\fachhochschule master\\2. semester\\high performance computing\\project simple gaussian\\opencl-simple-gaussian-blur\\gaussian_blur\\kernel.cl||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{35FFF216-B276-40F7-AE91-6CBEE7803FAD}|Gaussian_Blur.csproj|solutionrelative:kernel.cl||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{35FFF216-B276-40F7-AE91-6CBEE7803FAD}|Gaussian_Blur.csproj|c:\\users\\wiede\\documents\\fachhochschule master\\2. semester\\high performance computing\\project simple gaussian\\opencl-simple-gaussian-blur\\gaussian_blur\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{35FFF216-B276-40F7-AE91-6CBEE7803FAD}|Gaussian_Blur.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
@@ -14,7 +18,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Bookmark",
@@ -22,7 +26,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\wiede\\Documents\\Fachhochschule Master\\2. Semester\\High Performance Computing\\Project Simple Gaussian\\opencl-simple-gaussian-blur\\Gaussian_Blur\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
@@ -30,7 +34,20 @@
               "RelativeToolTip": "Program.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-09T12:16:43.885Z",
+              "WhenOpened": "2025-05-09T12:21:34.629Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "kernel.cl",
+              "DocumentMoniker": "C:\\Users\\wiede\\Documents\\Fachhochschule Master\\2. Semester\\High Performance Computing\\Project Simple Gaussian\\opencl-simple-gaussian-blur\\Gaussian_Blur\\kernel.cl",
+              "RelativeDocumentMoniker": "kernel.cl",
+              "ToolTip": "C:\\Users\\wiede\\Documents\\Fachhochschule Master\\2. Semester\\High Performance Computing\\Project Simple Gaussian\\opencl-simple-gaussian-blur\\Gaussian_Blur\\kernel.cl",
+              "RelativeToolTip": "kernel.cl",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-05-09T12:21:25.692Z",
               "EditorCaption": ""
             }
           ]
