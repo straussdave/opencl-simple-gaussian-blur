@@ -49,6 +49,20 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
+          "dependencies": {
+            "FreeImageNET": {
+              "target": "Package",
+              "version": "[3.17.1, )"
+            },
+            "OpenCL.Net": {
+              "target": "Package",
+              "version": "[2.2.9, )"
+            },
+            "SixLabors.ImageSharp": {
+              "target": "Package",
+              "version": "[3.1.8, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",

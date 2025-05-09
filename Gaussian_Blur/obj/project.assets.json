@@ -1,11 +1,112 @@
 {
   "version": 3,
   "targets": {
-    "net8.0": {}
+    "net8.0": {
+      "FreeImageNET/3.17.1": {
+        "type": "package",
+        "compile": {
+          "lib/net461/FreeImageNET.dll": {}
+        },
+        "runtime": {
+          "lib/net461/FreeImageNET.dll": {}
+        },
+        "runtimeTargets": {
+          "runtimes/win7-x64/native/FreeImage.dll": {
+            "assetType": "native",
+            "rid": "win7-x64"
+          },
+          "runtimes/win7-x86/native/FreeImage.dll": {
+            "assetType": "native",
+            "rid": "win7-x86"
+          }
+        }
+      },
+      "OpenCL.Net/2.2.9": {
+        "type": "package",
+        "compile": {
+          "lib/net40/OpenCL.Net.dll": {}
+        },
+        "runtime": {
+          "lib/net40/OpenCL.Net.dll": {}
+        },
+        "build": {
+          "build/net40/OpenCL.Net.targets": {}
+        }
+      },
+      "SixLabors.ImageSharp/3.1.8": {
+        "type": "package",
+        "compile": {
+          "lib/net6.0/SixLabors.ImageSharp.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net6.0/SixLabors.ImageSharp.dll": {
+            "related": ".xml"
+          }
+        },
+        "build": {
+          "build/SixLabors.ImageSharp.props": {}
+        }
+      }
+    }
   },
-  "libraries": {},
+  "libraries": {
+    "FreeImageNET/3.17.1": {
+      "sha512": "VY/MvT2WAyzEMVJZ+BFyWnEpmi8HWWdDPpc+G48Gmdh9Avf56zkj95x1bUZP5F/pQe1P/k56ZG2l2xg/v+XjCQ==",
+      "type": "package",
+      "path": "freeimagenet/3.17.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "freeimagenet.3.17.1.nupkg.sha512",
+        "freeimagenet.nuspec",
+        "lib/net40/FreeImageNET.dll",
+        "lib/net45/FreeImageNET.dll",
+        "lib/net451/FreeImageNET.dll",
+        "lib/net452/FreeImageNET.dll",
+        "lib/net46/FreeImageNET.dll",
+        "lib/net461/FreeImageNET.dll",
+        "runtimes/win7-x64/native/FreeImage.dll",
+        "runtimes/win7-x86/native/FreeImage.dll"
+      ]
+    },
+    "OpenCL.Net/2.2.9": {
+      "sha512": "88xksmTwopVt7UN8Kdpry3sIKcEM5sbvIKJYYwj8MGOvnpqS50N9HaKBD/oXae/1pKyuj2/Ipo1eid7yQ18B1Q==",
+      "type": "package",
+      "path": "opencl.net/2.2.9",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "build/net40/OpenCL.Net.targets",
+        "lib/net40/OpenCL.Net.dll",
+        "opencl.net.2.2.9.nupkg.sha512",
+        "opencl.net.nuspec"
+      ]
+    },
+    "SixLabors.ImageSharp/3.1.8": {
+      "sha512": "8eJkROLGh6DBQLR666q2aOpAaean2puZaZ6Ur9YxoyGzjaZhv8OJSxtnDou54+OXMkXtLUdyQC0so47sOsqZjg==",
+      "type": "package",
+      "path": "sixlabors.imagesharp/3.1.8",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE",
+        "build/SixLabors.ImageSharp.props",
+        "lib/net6.0/SixLabors.ImageSharp.dll",
+        "lib/net6.0/SixLabors.ImageSharp.xml",
+        "sixlabors.imagesharp.128.png",
+        "sixlabors.imagesharp.3.1.8.nupkg.sha512",
+        "sixlabors.imagesharp.nuspec"
+      ]
+    }
+  },
   "projectFileDependencyGroups": {
-    "net8.0": []
+    "net8.0": [
+      "FreeImageNET >= 3.17.1",
+      "OpenCL.Net >= 2.2.9",
+      "SixLabors.ImageSharp >= 3.1.8"
+    ]
   },
   "packageFolders": {
     "C:\\Users\\wiede\\.nuget\\packages\\": {},
@@ -56,6 +157,20 @@
     "frameworks": {
       "net8.0": {
         "targetAlias": "net8.0",
+        "dependencies": {
+          "FreeImageNET": {
+            "target": "Package",
+            "version": "[3.17.1, )"
+          },
+          "OpenCL.Net": {
+            "target": "Package",
+            "version": "[2.2.9, )"
+          },
+          "SixLabors.ImageSharp": {
+            "target": "Package",
+            "version": "[3.1.8, )"
+          }
+        },
         "imports": [
           "net461",
           "net462",
@@ -75,5 +190,27 @@
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.100/PortableRuntimeIdentifierGraph.json"
       }
     }
-  }
+  },
+  "logs": [
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Das Paket \"FreeImageNET 3.17.1\" wurde nicht mit dem Projektzielframework \"net8.0\", sondern mit \".NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1\" wiederhergestellt. Dieses Paket ist mit Ihrem Projekt möglicherweise nicht vollständig kompatibel.",
+      "libraryId": "FreeImageNET",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    },
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Das Paket \"OpenCL.Net 2.2.9\" wurde nicht mit dem Projektzielframework \"net8.0\", sondern mit \".NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1\" wiederhergestellt. Dieses Paket ist mit Ihrem Projekt möglicherweise nicht vollständig kompatibel.",
+      "libraryId": "OpenCL.Net",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    }
+  ]
 }
