@@ -2,109 +2,14 @@
 using System.IO;
 using OpenCL.Net;
 using SixLabors.ImageSharp;
-using FreeImageAPI;
-using SixLabors.ImageSharp.ColorSpaces;
-using SixLabors.ImageSharp.Memory;
 using SixLabors.ImageSharp.PixelFormats;
+
 
 namespace Gaussian_Blur
 {
     internal class Program
     {
-        struct TGAHeader
-        {
-            public byte idLength;
-            public byte colorMapType;
-            public byte imageType;
-            public ushort colorMapFirstEntryIndex;
-            public ushort colorMapLength;
-            public byte colorMapEntrySize;
-            public ushort xOrigin;
-            public ushort yOrigin;
-            public ushort width;
-            public ushort height;
-            public byte pixelDepth;
-            public byte imageDescriptor;
-        }
-
-
-        static byte[] LoadTGA(string filename, out int width, out int height, out int channels)
-        {
-            using (BinaryReader reader = new BinaryReader(File.Open(filename, FileMode.Open)))
-            {
-                TGAHeader header = new TGAHeader
-                {
-                    idLength = reader.ReadByte(),
-                    colorMapType = reader.ReadByte(),
-                    imageType = reader.ReadByte(),
-                    colorMapFirstEntryIndex = reader.ReadUInt16(),
-                    colorMapLength = reader.ReadUInt16(),
-                    colorMapEntrySize = reader.ReadByte(),
-                    xOrigin = reader.ReadUInt16(),
-                    yOrigin = reader.ReadUInt16(),
-                    width = reader.ReadUInt16(),
-                    height = reader.ReadUInt16(),
-                    pixelDepth = reader.ReadByte(),
-                    imageDescriptor = reader.ReadByte()
-                };
-
-                if (header.imageType != 2)
-                    throw new Exception("Only uncompressed RGB(A) TGA is supported.");
-
-                width = header.width;
-                height = header.height;
-                channels = header.pixelDepth / 8;
-
-                if (channels != 3 && channels != 4)
-                    throw new Exception("Only 24-bit or 32-bit TGA is supported.");
-
-                // Skip ID field if present
-                if (header.idLength > 0)
-                    reader.BaseStream.Seek(header.idLength, SeekOrigin.Current);
-
-                int imageSize = width * height * channels;
-                byte[] data = reader.ReadBytes(imageSize);
-
-                // Convert BGR(A) to RGB(A)
-                for (int i = 0; i < imageSize; i += channels)
-                {
-                    byte temp = data[i];
-                    data[i] = data[i + 2];
-                    data[i + 2] = temp;
-                }
-
-                return data;
-            }
-        }
-
-
-
-        static Image<Rgba32> CreateImageFromByteArray(byte[] data, int width, int height, int channels)
-        {
-            Image<Rgba32> image = new Image<Rgba32>(width, height);
-
-            int index = 0;
-            for (int y = 0; y < height; y++)
-            {
-                for (int x = 0; x < width; x++)
-                {
-                    byte r = data[x*y];
-                    byte g = data[x * y+1];
-                    byte b = data[x * y+2];
-                    byte a = 255; // Default alpha value
-                    if (channels == 4)
-                        a = data[x * y+3]; // Falls dein Kernel Alpha beibehält oder generiert
-
-                    image[x, y] = new Rgba32(r, g, b, a);
-                }
-            }
-
-            return image;
-        }
-
-
-
-
+       
         static void CheckStatus(ErrorCode err)
         {
             if (err != ErrorCode.Success)
@@ -115,14 +20,17 @@ namespace Gaussian_Blur
         }
         static void Main(string[] args)
         {
-            //get image
-            string imagePath = "shuttle.tga";
-            int height, width;
-            var pixelData = LoadTGA(imagePath, out width, out height, out int channels);
+            //always creates an image with 4 channels rgba
+            using var image = Image.Load<Rgba32>("shuttle.png");
+            int width = image.Width;
+            int height = image.Height;
 
-            // input and output arrays  
-            int elementSize = width * height*channels;
-         
+            int imageDataSize = width * height * 4;
+
+            byte[] pixelData = new byte[imageDataSize]; 
+            image.CopyPixelDataTo(pixelData);
+
+            #region OpenCL setup
             // used for checking error status of api calls
             ErrorCode status;
 
@@ -150,7 +58,6 @@ namespace Gaussian_Blur
                 System.Environment.Exit(1);
             }
 
-
             // select the device
             Device[] devices = new Device[numDevices];
             CheckStatus(Cl.GetDeviceIDs(platform, DeviceType.All, numDevices, devices, out numDevices));
@@ -164,14 +71,16 @@ namespace Gaussian_Blur
             CommandQueue commandQueue = Cl.CreateCommandQueue(context, device, 0, out status);
             CheckStatus(status);
 
-            // allocate two input and one output buffer for the three vectors
-            IMem<byte> imageBuffer = Cl.CreateBuffer<byte>(context, MemFlags.ReadOnly, elementSize, out status);
+            #endregion
+
+            //create buffers with the size of the image
+            IMem<byte> imageBuffer = Cl.CreateBuffer<byte>(context, MemFlags.ReadOnly, imageDataSize, out status);
             CheckStatus(status);
-            IMem<byte> outputBuffer = Cl.CreateBuffer<byte>(context, MemFlags.WriteOnly, elementSize, out status); ;
+            IMem<byte> outputBuffer = Cl.CreateBuffer<byte>(context, MemFlags.WriteOnly, imageDataSize, out status); ;
             CheckStatus(status);
 
-            // write data from the input vectors to the buffers
-            CheckStatus(Cl.EnqueueWriteBuffer(commandQueue, imageBuffer, Bool.True, IntPtr.Zero, new IntPtr(elementSize), pixelData, 0, null, out var _));
+            // write data image data to the buffer
+            CheckStatus(Cl.EnqueueWriteBuffer(commandQueue, imageBuffer, Bool.True, IntPtr.Zero, new IntPtr(imageDataSize), pixelData, 0, null, out var _));
 
 
             string programSource = File.ReadAllText("kernel.cl");
@@ -188,7 +97,7 @@ namespace Gaussian_Blur
                 System.Environment.Exit(1);
             }
 
-            // create the vector addition kernel
+            // create Kernel
             OpenCL.Net.Kernel kernel = Cl.CreateKernel(program, "print_id", out status);
             CheckStatus(status);
 
@@ -197,13 +106,20 @@ namespace Gaussian_Blur
             CheckStatus(Cl.SetKernelArg(kernel, 1, outputBuffer));
             CheckStatus(Cl.SetKernelArg(kernel, 2, width));
             CheckStatus(Cl.SetKernelArg(kernel, 3, height));
-            CheckStatus(Cl.SetKernelArg(kernel, 4, channels));
+            CheckStatus(Cl.SetKernelArg(kernel, 4, 4));//with channels
 
-            byte[] output = new byte[elementSize];
+            byte[] output = new byte[imageDataSize];
             CheckStatus(Cl.EnqueueNDRangeKernel(commandQueue, kernel, 2, null, new IntPtr[] {(IntPtr)width, (IntPtr)height }, null, 0, null, out var _));
-            CheckStatus(Cl.EnqueueReadBuffer(commandQueue, outputBuffer, Bool.True, IntPtr.Zero, new IntPtr(elementSize), output, 0, null, out var _));
+            CheckStatus(Cl.EnqueueReadBuffer(commandQueue, outputBuffer, Bool.True, IntPtr.Zero, new IntPtr(imageDataSize), output, 0, null, out var _));
 
-            CreateImageFromByteArray(output, width, height, channels).Save("output.png");
+            // Bild aus byte[] erzeugen
+            //Image<Rgba32> outputImage = Image.LoadPixelData<Rgba32>(output, width, height);
+            Image<Rgba32> outputImage = Image.LoadPixelData<Rgba32>(pixelData, width, height);
+
+            // Als PNG speichern
+            outputImage.Save("output.png");
+
+            //CreateImageFromByteArray(output, width, height, 4).Save("output.png");
 
             Console.WriteLine("Bild wurde gespeichert als output.png");
 

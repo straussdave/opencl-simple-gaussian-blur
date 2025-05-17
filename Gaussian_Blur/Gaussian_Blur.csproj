@@ -6,14 +6,14 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-	
-  <ItemGroup>
-    <Content Include="shuttle.tga">
-      <CopyToOutputDirectory>CopyAlways</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
 
-  <ItemGroup>
+	  <ItemGroup>
+		  <Content Include="shuttle.png">
+			  <CopyToOutputDirectory>CopyAlways</CopyToOutputDirectory>
+		  </Content>
+	  </ItemGroup>
+
+	  <ItemGroup>
     <Kernel Include="kernel.cl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Kernel>
