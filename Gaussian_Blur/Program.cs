@@ -113,16 +113,28 @@ namespace Gaussian_Blur
             CheckStatus(Cl.EnqueueReadBuffer(commandQueue, outputBuffer, Bool.True, IntPtr.Zero, new IntPtr(imageDataSize), output, 0, null, out var _));
 
             // Bild aus byte[] erzeugen
-            //Image<Rgba32> outputImage = Image.LoadPixelData<Rgba32>(output, width, height);
-            Image<Rgba32> outputImage = Image.LoadPixelData<Rgba32>(pixelData, width, height);
+            Image<Rgba32> outputImage = Image.LoadPixelData<Rgba32>(output, width, height);
 
             // Als PNG speichern
-            outputImage.Save("output.png");
+            outputImage.Save(GetUniqueFilename("output"));
 
             //CreateImageFromByteArray(output, width, height, 4).Save("output.png");
-
             Console.WriteLine("Bild wurde gespeichert als output.png");
 
+        }
+
+        static string GetUniqueFilename(string filename)
+        {
+            int count = 0;
+
+            do
+            {
+                filename = count == 0 ? "output.png" : $"output({count}).png";
+                count++;
+            }
+            while (File.Exists(filename));
+
+            return filename;
         }
     }
 }
