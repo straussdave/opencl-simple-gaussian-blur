@@ -42,6 +42,59 @@ namespace Gaussian_Blur
             return kernelSize;
         }
 
+        /// <summary>
+        /// Calculates the Values that will be multiplied with each pixel in the kernel.
+        /// </summary>
+        /// <param name="kernelSize"></param>
+        /// <returns>kernel as 1 dim float array</returns>
+        static float[] CreateGaussianKernel(int kernelSize)
+        {
+            float[] kernel = new float[kernelSize * kernelSize];
+            float sum = 0f;
+            int index = 0;
+
+            float half = (kernelSize - 1) / 2f;
+
+            for (int i = 0; i < kernelSize; i++)
+            {
+                for (int j = 0; j < kernelSize; j++)
+                {
+                    float x = i - half;
+                    float y = j - half;
+                    float value = (float)Math.Exp(-(x * x + y * y) / (2f * 1.0f * 1.0f));
+                    kernel[index++] = value;
+                    sum += value;
+                }
+            }
+            
+            for (int k = 0; k < kernel.Length; k++)
+                kernel[k] /= sum;
+           
+            for (int i = 0; i < kernelSize; i++)
+            {
+                for (int j = 0; j < kernelSize; j++)
+                {
+                    Console.Write($"{kernel[i * kernelSize + j]:F6} ");
+                }
+                Console.WriteLine();
+            }
+
+            return kernel;
+        }
+        static string GetUniqueFilename(string filename)
+        {
+            int count = 0;
+
+            do
+            {
+                filename = count == 0 ? "output.png" : $"output({count}).png";
+                count++;
+            }
+            while (File.Exists(filename));
+
+            return filename;
+        }
+
         static void Main(string[] args)
         {
             int kernelSize = GetKernelSize(args);
@@ -56,6 +109,8 @@ namespace Gaussian_Blur
 
             byte[] pixelData = new byte[imageDataSize]; 
             image.CopyPixelDataTo(pixelData);
+
+            float[] gausKernel = CreateGaussianKernel(kernelSize);
 
             #region OpenCL setup
             // used for checking error status of api calls
@@ -103,11 +158,16 @@ namespace Gaussian_Blur
             //create buffers with the size of the image
             IMem<byte> imageBuffer = Cl.CreateBuffer<byte>(context, MemFlags.ReadOnly, imageDataSize, out status);
             CheckStatus(status);
+            IMem<float> gausKernelBuffer = Cl.CreateBuffer<float>(context, MemFlags.ReadOnly, gausKernel.Length * sizeof(float), out status);
+            CheckStatus(status);
             IMem<byte> outputBuffer = Cl.CreateBuffer<byte>(context, MemFlags.WriteOnly, imageDataSize, out status); ;
             CheckStatus(status);
 
             // write data image data to the buffer
             CheckStatus(Cl.EnqueueWriteBuffer(commandQueue, imageBuffer, Bool.True, IntPtr.Zero, new IntPtr(imageDataSize), pixelData, 0, null, out var _));
+
+            //write GaussKernel to buffer
+            CheckStatus(Cl.EnqueueWriteBuffer(commandQueue, gausKernelBuffer, Bool.True, IntPtr.Zero, new IntPtr(gausKernel.Length * sizeof(float)), gausKernel, 0, null, out var _));
 
 
             string programSource = File.ReadAllText("kernel.cl");
@@ -135,6 +195,7 @@ namespace Gaussian_Blur
             CheckStatus(Cl.SetKernelArg(kernel, 3, height));
             CheckStatus(Cl.SetKernelArg(kernel, 4, 4));//channels
             CheckStatus(Cl.SetKernelArg(kernel, 5, kernelSize));
+            CheckStatus(Cl.SetKernelArg(kernel, 6, gausKernelBuffer));
 
             byte[] output = new byte[imageDataSize];
             CheckStatus(Cl.EnqueueNDRangeKernel(commandQueue, kernel, 2, null, new IntPtr[] {(IntPtr)width, (IntPtr)height }, null, 0, null, out var _));
@@ -148,21 +209,6 @@ namespace Gaussian_Blur
 
             //CreateImageFromByteArray(output, width, height, 4).Save("output.png");
             Console.WriteLine("Bild wurde gespeichert als output.png");
-
-        }
-
-        static string GetUniqueFilename(string filename)
-        {
-            int count = 0;
-
-            do
-            {
-                filename = count == 0 ? "output.png" : $"output({count}).png";
-                count++;
-            }
-            while (File.Exists(filename));
-
-            return filename;
-        }
+        }    
     }
 }
