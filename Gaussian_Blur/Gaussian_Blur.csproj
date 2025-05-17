@@ -6,20 +6,23 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+	
+  <ItemGroup>
+    <Content Include="shuttle.tga">
+      <CopyToOutputDirectory>CopyAlways</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Kernel Include="kernel.cl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Kernel>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="FreeImageNET" Version="3.17.1" />
     <PackageReference Include="OpenCL.Net" Version="2.2.9" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.8" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="kernel.cl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="shuttle.tga">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>

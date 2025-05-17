@@ -119,9 +119,8 @@ namespace Gaussian_Blur
             var pixelData = LoadTGA(imagePath, out width, out height, out int channels);
 
             // input and output arrays  
-            int elementSize = width * height;
-            int dataSize = elementSize * sizeof(int);
-
+            int elementSize = width * height*channels;
+         
             // used for checking error status of api calls
             ErrorCode status;
 
@@ -164,13 +163,13 @@ namespace Gaussian_Blur
             CheckStatus(status);
 
             // allocate two input and one output buffer for the three vectors
-            IMem<int> imageBuffer = Cl.CreateBuffer<int>(context, MemFlags.ReadOnly, dataSize, out status);
+            IMem<byte> imageBuffer = Cl.CreateBuffer<byte>(context, MemFlags.ReadOnly, elementSize, out status);
             CheckStatus(status);
-            IMem<int> outputBuffer = Cl.CreateBuffer<int>(context, MemFlags.WriteOnly, dataSize, out status); ;
+            IMem<byte> outputBuffer = Cl.CreateBuffer<byte>(context, MemFlags.WriteOnly, elementSize, out status); ;
             CheckStatus(status);
 
             // write data from the input vectors to the buffers
-            CheckStatus(Cl.EnqueueWriteBuffer(commandQueue, imageBuffer, Bool.True, IntPtr.Zero, new IntPtr(dataSize), pixelData, 0, null, out var _));
+            CheckStatus(Cl.EnqueueWriteBuffer(commandQueue, imageBuffer, Bool.True, IntPtr.Zero, new IntPtr(elementSize), pixelData, 0, null, out var _));
 
 
             string programSource = File.ReadAllText("kernel.cl");
@@ -196,9 +195,9 @@ namespace Gaussian_Blur
             CheckStatus(Cl.SetKernelArg(kernel, 1, outputBuffer));
 
 
-            byte[] output = new byte[dataSize];
+            byte[] output = new byte[elementSize];
             CheckStatus(Cl.EnqueueNDRangeKernel(commandQueue, kernel, 2, null, new IntPtr[] {(IntPtr)width, (IntPtr)height }, null, 0, null, out var _));
-            CheckStatus(Cl.EnqueueReadBuffer(commandQueue, outputBuffer, Bool.True, IntPtr.Zero, new IntPtr(dataSize), output, 0, null, out var _));
+            CheckStatus(Cl.EnqueueReadBuffer(commandQueue, outputBuffer, Bool.True, IntPtr.Zero, new IntPtr(elementSize), output, 0, null, out var _));
 
             CreateImageFromByteArray(output, width, height).Save("output.png");
             Console.WriteLine("Bild wurde gespeichert als output.png");
