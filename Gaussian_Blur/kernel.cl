@@ -3,7 +3,8 @@ __kernel void print_id(
 		__global uchar *outputBuffer,
 		const int width,
 		const int height,
-		const int channels)
+		const int channels,
+		const int kernelSize)
 {
 	if(get_global_id(0) == 0 && get_global_id(1) == 0)
 	printf("OCL: from kernel\n");

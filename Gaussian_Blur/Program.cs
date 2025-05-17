@@ -18,8 +18,35 @@ namespace Gaussian_Blur
                 System.Environment.Exit(1);
             }
         }
+
+        /// <summary>
+        /// Gets the KernelSize from args or sets it to 3 if no args are given.
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns>kernelSize</returns>
+        static int GetKernelSize(string[] args)
+        {
+            int kernelSize = args.Length > 0 ? int.Parse(args[0]) : 3;
+            if (kernelSize % 2 == 0)
+            {
+                Console.WriteLine("Kernel size must be odd!");
+                System.Environment.Exit(1);
+            }
+
+            if (kernelSize > 9 || kernelSize < 1)
+            {
+                Console.WriteLine("Kernel size must be between 1 and 9!");
+                System.Environment.Exit(1);
+            }
+            
+            return kernelSize;
+        }
+
         static void Main(string[] args)
         {
+            int kernelSize = GetKernelSize(args);
+
+
             //always creates an image with 4 channels rgba
             using var image = Image.Load<Rgba32>("shuttle.png");
             int width = image.Width;
@@ -106,7 +133,8 @@ namespace Gaussian_Blur
             CheckStatus(Cl.SetKernelArg(kernel, 1, outputBuffer));
             CheckStatus(Cl.SetKernelArg(kernel, 2, width));
             CheckStatus(Cl.SetKernelArg(kernel, 3, height));
-            CheckStatus(Cl.SetKernelArg(kernel, 4, 4));//with channels
+            CheckStatus(Cl.SetKernelArg(kernel, 4, 4));//channels
+            CheckStatus(Cl.SetKernelArg(kernel, 5, kernelSize));
 
             byte[] output = new byte[imageDataSize];
             CheckStatus(Cl.EnqueueNDRangeKernel(commandQueue, kernel, 2, null, new IntPtr[] {(IntPtr)width, (IntPtr)height }, null, 0, null, out var _));
