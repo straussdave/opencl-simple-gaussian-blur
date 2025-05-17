@@ -79,7 +79,7 @@ namespace Gaussian_Blur
 
 
 
-        static Image<Rgba32> CreateImageFromByteArray(byte[] data, int width, int height)
+        static Image<Rgba32> CreateImageFromByteArray(byte[] data, int width, int height, int channels)
         {
             Image<Rgba32> image = new Image<Rgba32>(width, height);
 
@@ -88,10 +88,12 @@ namespace Gaussian_Blur
             {
                 for (int x = 0; x < width; x++)
                 {
-                    byte r = data[index++];
-                    byte g = data[index++];
-                    byte b = data[index++];
-                    byte a = data[index++]; // Falls dein Kernel Alpha beibehält oder generiert
+                    byte r = data[x*y];
+                    byte g = data[x * y+1];
+                    byte b = data[x * y+2];
+                    byte a = 255; // Default alpha value
+                    if (channels == 4)
+                        a = data[x * y+3]; // Falls dein Kernel Alpha beibehält oder generiert
 
                     image[x, y] = new Rgba32(r, g, b, a);
                 }
@@ -193,13 +195,16 @@ namespace Gaussian_Blur
             // set the kernel arguments
             CheckStatus(Cl.SetKernelArg(kernel, 0, imageBuffer));
             CheckStatus(Cl.SetKernelArg(kernel, 1, outputBuffer));
-
+            CheckStatus(Cl.SetKernelArg(kernel, 2, width));
+            CheckStatus(Cl.SetKernelArg(kernel, 3, height));
+            CheckStatus(Cl.SetKernelArg(kernel, 4, channels));
 
             byte[] output = new byte[elementSize];
             CheckStatus(Cl.EnqueueNDRangeKernel(commandQueue, kernel, 2, null, new IntPtr[] {(IntPtr)width, (IntPtr)height }, null, 0, null, out var _));
             CheckStatus(Cl.EnqueueReadBuffer(commandQueue, outputBuffer, Bool.True, IntPtr.Zero, new IntPtr(elementSize), output, 0, null, out var _));
 
-            CreateImageFromByteArray(output, width, height).Save("output.png");
+            CreateImageFromByteArray(output, width, height, channels).Save("output.png");
+
             Console.WriteLine("Bild wurde gespeichert als output.png");
 
         }
