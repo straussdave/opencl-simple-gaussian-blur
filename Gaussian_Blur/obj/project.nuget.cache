@@ -1,19 +1,19 @@
 {
   "version": 2,
-  "dgSpecHash": "vT/vedPbV8Q=",
+  "dgSpecHash": "zGmZTWCJiFyZC1pEbuoTst2QeQ/JRA2cMrznsqPuRu7kHIQiPjpKjsowYZnFKiI07oQLy6ZW43INk5c058quIw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\wiede\\Documents\\Fachhochschule Master\\2. Semester\\High Performance Computing\\Project Simple Gaussian\\opencl-simple-gaussian-blur\\Gaussian_Blur\\Gaussian_Blur.csproj",
+  "projectFilePath": "C:\\Users\\david\\Source\\Repos\\opencl-simple-gaussian-blur\\Gaussian_Blur\\Gaussian_Blur.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\wiede\\.nuget\\packages\\freeimagenet\\3.17.1\\freeimagenet.3.17.1.nupkg.sha512",
-    "C:\\Users\\wiede\\.nuget\\packages\\opencl.net\\2.2.9\\opencl.net.2.2.9.nupkg.sha512",
-    "C:\\Users\\wiede\\.nuget\\packages\\sixlabors.imagesharp\\3.1.8\\sixlabors.imagesharp.3.1.8.nupkg.sha512"
+    "C:\\Users\\david\\.nuget\\packages\\freeimagenet\\3.17.1\\freeimagenet.3.17.1.nupkg.sha512",
+    "C:\\Users\\david\\.nuget\\packages\\opencl.net\\2.2.9\\opencl.net.2.2.9.nupkg.sha512",
+    "C:\\Users\\david\\.nuget\\packages\\sixlabors.imagesharp\\3.1.8\\sixlabors.imagesharp.3.1.8.nupkg.sha512"
   ],
   "logs": [
     {
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Das Paket \"FreeImageNET 3.17.1\" wurde nicht mit dem Projektzielframework \"net8.0\", sondern mit \".NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1\" wiederhergestellt. Dieses Paket ist mit Ihrem Projekt möglicherweise nicht vollständig kompatibel.",
+      "message": "Package 'FreeImageNET 3.17.1' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net8.0'. This package may not be fully compatible with your project.",
       "libraryId": "FreeImageNET",
       "targetGraphs": [
         "net8.0"
@@ -23,7 +23,7 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Das Paket \"OpenCL.Net 2.2.9\" wurde nicht mit dem Projektzielframework \"net8.0\", sondern mit \".NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1\" wiederhergestellt. Dieses Paket ist mit Ihrem Projekt möglicherweise nicht vollständig kompatibel.",
+      "message": "Package 'OpenCL.Net 2.2.9' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net8.0'. This package may not be fully compatible with your project.",
       "libraryId": "OpenCL.Net",
       "targetGraphs": [
         "net8.0"

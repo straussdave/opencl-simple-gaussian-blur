@@ -26,7 +26,7 @@ namespace Gaussian_Blur
         /// <returns>kernelSize</returns>
         static int GetKernelSize(string[] args)
         {
-            int kernelSize = args.Length > 0 ? int.Parse(args[0]) : 3;
+            int kernelSize = args.Length > 0 ? int.Parse(args[0]) : 9;
             if (kernelSize % 2 == 0)
             {
                 Console.WriteLine("Kernel size must be odd!");
@@ -61,7 +61,7 @@ namespace Gaussian_Blur
                 {
                     float x = i - half;
                     float y = j - half;
-                    float value = (float)Math.Exp(-(x * x + y * y) / (2f * 1.0f * 1.0f));
+                    float value = (float)Math.Exp(-(x * x + y * y) / (2f * 1.0f * 100.0f));
                     kernel[index++] = value;
                     sum += value;
                 }

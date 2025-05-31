@@ -9,7 +9,7 @@
 
 	  <ItemGroup>
 		  <Content Include="shuttle.png">
-			  <CopyToOutputDirectory>CopyAlways</CopyToOutputDirectory>
+			  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		  </Content>
 	  </ItemGroup>
 
