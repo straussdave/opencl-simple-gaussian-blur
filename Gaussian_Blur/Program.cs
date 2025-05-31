@@ -93,7 +93,7 @@ namespace Gaussian_Blur
 
 
             //always creates an image with 4 channels rgba
-            using var image = Image.Load<Rgba32>("shuttle.png");
+            using var image = Image.Load<Rgba32>("shuttle_small.png");
             int width = image.Width;
             int height = image.Height;
 
@@ -147,21 +147,6 @@ namespace Gaussian_Blur
 
             #endregion
 
-            //create buffers with the size of the image
-            IMem<byte> imageBuffer = Cl.CreateBuffer<byte>(context, MemFlags.ReadOnly, imageDataSize, out status);
-            CheckStatus(status);
-            IMem<float> gausKernelBuffer = Cl.CreateBuffer<float>(context, MemFlags.ReadOnly, gausKernel.Length * sizeof(float), out status);
-            CheckStatus(status);
-            IMem<byte> outputBuffer = Cl.CreateBuffer<byte>(context, MemFlags.WriteOnly, imageDataSize, out status); ;
-            CheckStatus(status);
-
-            // write data image data to the buffer
-            CheckStatus(Cl.EnqueueWriteBuffer(commandQueue, imageBuffer, Bool.True, IntPtr.Zero, new IntPtr(imageDataSize), pixelData, 0, null, out var _));
-
-            //write GaussKernel to buffer
-            CheckStatus(Cl.EnqueueWriteBuffer(commandQueue, gausKernelBuffer, Bool.True, IntPtr.Zero, new IntPtr(gausKernel.Length * sizeof(float)), gausKernel, 0, null, out var _));
-
-
             string programSource = File.ReadAllText("kernel.cl");
             OpenCL.Net.Program program = Cl.CreateProgramWithSource(context, 1, new string[] { programSource }, null, out status);
             CheckStatus(status);
@@ -180,17 +165,52 @@ namespace Gaussian_Blur
             OpenCL.Net.Kernel kernel = Cl.CreateKernel(program, "print_id", out status);
             CheckStatus(status);
 
-            // set the kernel arguments
+            //create buffers with the size of the image
+            IMem<byte> imageBuffer = Cl.CreateBuffer<byte>(context, MemFlags.ReadOnly, imageDataSize, out status);
+            CheckStatus(status);
+            IMem<float> gausKernelBuffer = Cl.CreateBuffer<float>(context, MemFlags.ReadOnly, gausKernel.Length * sizeof(float), out status);
+            CheckStatus(status);
+            IMem<byte> tempBuffer = Cl.CreateBuffer<byte>(context, MemFlags.ReadWrite, imageDataSize, out status);
+            CheckStatus(status);
+            IMem<byte> outputBuffer = Cl.CreateBuffer<byte>(context, MemFlags.WriteOnly, imageDataSize, out status);
+            CheckStatus(status);
+
+            // write data image data to the buffer
+            CheckStatus(Cl.EnqueueWriteBuffer(commandQueue, imageBuffer, Bool.True, IntPtr.Zero, new IntPtr(imageDataSize), pixelData, 0, null, out var _));
+            //write GaussKernel to buffer
+            CheckStatus(Cl.EnqueueWriteBuffer(commandQueue, gausKernelBuffer, Bool.True, IntPtr.Zero, new IntPtr(gausKernel.Length * sizeof(float)), gausKernel, 0, null, out var _));
+
+            // set the kernel arguments for horizontal run
             CheckStatus(Cl.SetKernelArg(kernel, 0, imageBuffer));
             CheckStatus(Cl.SetKernelArg(kernel, 1, outputBuffer));
             CheckStatus(Cl.SetKernelArg(kernel, 2, width));
             CheckStatus(Cl.SetKernelArg(kernel, 3, height));
             CheckStatus(Cl.SetKernelArg(kernel, 4, 4));//channels
             CheckStatus(Cl.SetKernelArg(kernel, 5, kernelSize));
-            CheckStatus(Cl.SetKernelArg(kernel, 6, gausKernelBuffer));
+            CheckStatus(Cl.SetKernelArg(kernel, 6, 1)); //isHorizontal
+            CheckStatus(Cl.SetKernelArg(kernel, 7, gausKernelBuffer));
+            CheckStatus(Cl.SetKernelArg(kernel, 8, null));
 
             byte[] output = new byte[imageDataSize];
             CheckStatus(Cl.EnqueueNDRangeKernel(commandQueue, kernel, 2, null, new IntPtr[] {(IntPtr)width, (IntPtr)height }, null, 0, null, out var _));
+
+            //// write data image data to the buffer
+            //CheckStatus(Cl.EnqueueWriteBuffer(commandQueue, tempBuffer, Bool.True, IntPtr.Zero, new IntPtr(imageDataSize), pixelData, 0, null, out var _));
+            ////write GaussKernel to buffer
+            //CheckStatus(Cl.EnqueueWriteBuffer(commandQueue, gausKernelBuffer, Bool.True, IntPtr.Zero, new IntPtr(gausKernel.Length * sizeof(float)), gausKernel, 0, null, out var _));
+
+            //// set the kernel arguments for vertical run
+            //CheckStatus(Cl.SetKernelArg(kernel, 0, tempBuffer));
+            //CheckStatus(Cl.SetKernelArg(kernel, 1, outputBuffer));
+            //CheckStatus(Cl.SetKernelArg(kernel, 2, width));
+            //CheckStatus(Cl.SetKernelArg(kernel, 3, height));
+            //CheckStatus(Cl.SetKernelArg(kernel, 4, 4));//channels
+            //CheckStatus(Cl.SetKernelArg(kernel, 5, kernelSize));
+            //CheckStatus(Cl.SetKernelArg(kernel, 6, 0)); //isHorizontal
+            //CheckStatus(Cl.SetKernelArg(kernel, 7, gausKernelBuffer));
+            //CheckStatus(Cl.SetKernelArg(kernel, 8, null));
+
+            //CheckStatus(Cl.EnqueueNDRangeKernel(commandQueue, kernel, 2, null, new IntPtr[] { (IntPtr)width, (IntPtr)height }, null, 0, null, out var _));
             CheckStatus(Cl.EnqueueReadBuffer(commandQueue, outputBuffer, Bool.True, IntPtr.Zero, new IntPtr(imageDataSize), output, 0, null, out var _));
 
             // Bild aus byte[] erzeugen
@@ -201,6 +221,6 @@ namespace Gaussian_Blur
 
             //CreateImageFromByteArray(output, width, height, 4).Save("output.png");
             Console.WriteLine("Bild wurde gespeichert als output.png");
-        }    
+        }
     }
 }

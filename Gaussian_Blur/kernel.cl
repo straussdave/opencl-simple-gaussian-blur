@@ -5,7 +5,9 @@ __kernel void print_id(
 		const int height,
 		const int channels,
 		const int kernelSize,
-		__global const float *gausKernelBuffer)
+		const int is_horizontal,
+		__global const float *gausKernelBuffer,
+    	__local uchar *lineBuffer)
 {
 	size_t x = get_global_id(0);
 	size_t y = get_global_id(1);
@@ -16,26 +18,56 @@ __kernel void print_id(
 
 	size_t index = (y * width + x) * channels;
 
+	int lineBuffer_size;
+
+	if (is_horizontal == 1) {
+		lineBuffer_size = width;
+		for (int i = 0; i < width; i++) {
+			int imgIndex  = (y * width + i) * channels;  // (i, y)
+			int lineIndex = i * channels;
+
+			lineBuffer[lineIndex + 0] = inputBuffer[imgIndex + 0]; // R
+			lineBuffer[lineIndex + 1] = inputBuffer[imgIndex + 1]; // G
+			lineBuffer[lineIndex + 2] = inputBuffer[imgIndex + 2]; // B
+			if(channels == 4) {
+				lineBuffer[lineIndex + 3] = inputBuffer[imgIndex + 3];
+			}
+		}
+	} else {
+		lineBuffer_size = height;
+		for (int i = 0; i < height; i++) {
+			int imgIndex  = (i * width + x) * channels;  // (x, i)
+			int lineIndex = i * channels;
+
+			lineBuffer[lineIndex + 0] = inputBuffer[imgIndex + 0]; // R
+			lineBuffer[lineIndex + 1] = inputBuffer[imgIndex + 1]; // G
+			lineBuffer[lineIndex + 2] = inputBuffer[imgIndex + 2]; // B
+			if(channels == 4) {
+				lineBuffer[lineIndex + 3] = inputBuffer[imgIndex + 3];
+			}
+		}
+	}
+
+	barrier(CLK_LOCAL_MEM_FENCE);
+
     for (int kernel_x = -range; kernel_x <= range; kernel_x++) {
         int current_x = x + kernel_x;
-        int current_y = y;
 
-		current_x = clamp(current_x, 0, width - 1);
+		current_x = clamp(current_x, 0, lineBuffer_size - 1);
 
-		//because kernel and image are 1D arrays, we need to calculate the index from the different x and y
-        int neighborIndex = (current_y * width + current_x) * channels;
+        int neighborIndex = current_x * channels;
         int kernelIndex = kernel_x + range;
         float weight = gausKernelBuffer[kernelIndex];
 
-        sum_r += inputBuffer[neighborIndex]     * weight;
-        sum_g += inputBuffer[neighborIndex + 1] * weight;
-        sum_b += inputBuffer[neighborIndex + 2] * weight;
+        sum_r += lineBuffer[neighborIndex]     * weight;
+        sum_g += lineBuffer[neighborIndex + 1] * weight;
+        sum_b += lineBuffer[neighborIndex + 2] * weight;
 	}
 
 	outputBuffer[index] = (uchar)clamp(sum_r, 0.0f, 255.0f);	
 	outputBuffer[index+1] = (uchar)clamp(sum_g, 0.0f, 255.0f);
-	outputBuffer[index+2] = (uchar)clamp(sum_b, 0.0f, 255.0f);;
-	if(channels == 4)
+	outputBuffer[index+2] = (uchar)clamp(sum_b, 0.0f, 255.0f);
+	if(channels == 4) {
 		outputBuffer[index+3] = inputBuffer[index+3];
-
+	}	
 }
