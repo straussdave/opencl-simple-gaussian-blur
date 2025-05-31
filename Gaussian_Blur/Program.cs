@@ -49,38 +49,30 @@ namespace Gaussian_Blur
         /// <returns>kernel as 1 dim float array</returns>
         static float[] CreateGaussianKernel(int kernelSize)
         {
-            float[] kernel = new float[kernelSize * kernelSize];
+            float[] kernel = new float[kernelSize];
             float sum = 0f;
-            int index = 0;
 
             float half = (kernelSize - 1) / 2f;
 
             for (int i = 0; i < kernelSize; i++)
             {
-                for (int j = 0; j < kernelSize; j++)
-                {
-                    float x = i - half;
-                    float y = j - half;
-                    float value = (float)Math.Exp(-(x * x + y * y) / (2f * 1.0f * 100.0f));
-                    kernel[index++] = value;
-                    sum += value;
-                }
+                float x = i - half;
+                float value = (float)Math.Exp(-(x * x) / (2f * 3.0f * 3.0f)); // nur x-Achse
+                kernel[i] = value;
+                sum += value;
             }
-            
-            for (int k = 0; k < kernel.Length; k++)
-                kernel[k] /= sum;
-           
+
             for (int i = 0; i < kernelSize; i++)
-            {
-                for (int j = 0; j < kernelSize; j++)
-                {
-                    Console.Write($"{kernel[i * kernelSize + j]:F6} ");
-                }
-                Console.WriteLine();
-            }
+                kernel[i] /= sum;
+
+            for (int i = 0; i < kernelSize; i++)
+                Console.Write($"{kernel[i]:F6} ");
+
+            Console.WriteLine();
 
             return kernel;
         }
+
         static string GetUniqueFilename(string filename)
         {
             int count = 0;

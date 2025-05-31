@@ -24,7 +24,7 @@ __kernel void print_id(
 
 		//because kernel and image are 1D arrays, we need to calculate the index from the different x and y
         int neighborIndex = (current_y * width + current_x) * channels;
-        int kernelIndex = range * kernelSize + kernel_x + range;
+        int kernelIndex = kernel_x + range;
         float weight = gausKernelBuffer[kernelIndex];
 
         sum_r += inputBuffer[neighborIndex]     * weight;
