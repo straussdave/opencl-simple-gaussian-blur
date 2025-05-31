@@ -17,7 +17,7 @@
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
         {
-          "DockedWidth": 200,
+          "DockedWidth": 204,
           "SelectedChildIndex": 5,
           "Children": [
             {
@@ -48,7 +48,7 @@
               "RelativeDocumentMoniker": "Program.cs",
               "ToolTip": "C:\\Users\\david\\source\\repos\\opencl-simple-gaussian-blur\\Gaussian_Blur\\Program.cs",
               "RelativeToolTip": "Program.cs",
-              "ViewState": "AQIAALUAAAAAAAAAAAAAAL4AAAA/AAAA",
+              "ViewState": "AQIAAMkAAAAAAAAAAAAgwN8AAAA8AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-05-09T12:21:34.629Z",
               "EditorCaption": ""
@@ -61,7 +61,7 @@
               "RelativeDocumentMoniker": "kernel.cl",
               "ToolTip": "C:\\Users\\david\\source\\repos\\opencl-simple-gaussian-blur\\Gaussian_Blur\\kernel.cl",
               "RelativeToolTip": "kernel.cl",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAADgAAAAAAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABcAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
               "WhenOpened": "2025-05-09T12:21:25.692Z",
               "EditorCaption": ""

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Gaussian_Blur")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6079e74bed24c2b7ab28cc9a3e68c0e5f4da7471")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+36d7b5f0acfe8749fc83dc7fa7e8aa6c4c416725")]
 [assembly: System.Reflection.AssemblyProductAttribute("Gaussian_Blur")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Gaussian_Blur")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
