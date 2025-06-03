@@ -9,7 +9,7 @@
 
 	  <ItemGroup>
 		  <Content Include="shuttle.png">
-			  <CopyToOutputDirectory>CopyAlways</CopyToOutputDirectory>
+			  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		  </Content>
 	  </ItemGroup>
 
@@ -23,6 +23,12 @@
     <PackageReference Include="FreeImageNET" Version="3.17.1" />
     <PackageReference Include="OpenCL.Net" Version="2.2.9" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="shuttle_small.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
