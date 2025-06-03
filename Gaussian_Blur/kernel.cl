@@ -22,34 +22,31 @@ __kernel void print_id(
 	float sum_g = 0.0f;
 	float sum_b = 0.0f;
 
-	size_t index = (y * width + x) * channels;
+	size_t imgIndex = (y * width + x) * channels;
+	 
 
 	int lineLength = (is_horizontal == 1) ? width : height;
 
 	if (is_horizontal == 1) {
-		for (int i = 0; i < width; i++) {
-			int imgIndex  = (y * width + i) * channels;  // (i, y)
-			int lineIndex = i * channels;
+		int lineIndex = x * channels;
 
-			lineBuffer[lineIndex + 0] = inputBuffer[imgIndex + 0]; // R
-			lineBuffer[lineIndex + 1] = inputBuffer[imgIndex + 1]; // G
-			lineBuffer[lineIndex + 2] = inputBuffer[imgIndex + 2]; // B
-			if(channels == 4) {
-				lineBuffer[lineIndex + 3] = inputBuffer[imgIndex + 3];
-			}
+		lineBuffer[lineIndex + 0] = inputBuffer[imgIndex + 0]; // R
+		lineBuffer[lineIndex + 1] = inputBuffer[imgIndex + 1]; // G
+		lineBuffer[lineIndex + 2] = inputBuffer[imgIndex + 2]; // B
+		if(channels == 4) {
+			lineBuffer[lineIndex + 3] = inputBuffer[imgIndex + 3];
 		}
+		
 	} else {
-		for (int i = 0; i < height; i++) {
-			int imgIndex  = (i * width + x) * channels;  // (x, i)
-			int lineIndex = i * channels;
+		int lineIndex = y * channels;
 
-			lineBuffer[lineIndex + 0] = inputBuffer[imgIndex + 0]; // R
-			lineBuffer[lineIndex + 1] = inputBuffer[imgIndex + 1]; // G
-			lineBuffer[lineIndex + 2] = inputBuffer[imgIndex + 2]; // B
-			if(channels == 4) {
-				lineBuffer[lineIndex + 3] = inputBuffer[imgIndex + 3];
-			}
+		lineBuffer[lineIndex + 0] = inputBuffer[imgIndex + 0]; // R
+		lineBuffer[lineIndex + 1] = inputBuffer[imgIndex + 1]; // G
+		lineBuffer[lineIndex + 2] = inputBuffer[imgIndex + 2]; // B
+		if(channels == 4) {
+			lineBuffer[lineIndex + 3] = inputBuffer[imgIndex + 3];
 		}
+		
 	}
 
 	barrier(CLK_LOCAL_MEM_FENCE);
@@ -75,10 +72,10 @@ __kernel void print_id(
         sum_b += lineBuffer[neighborIndex + 2] * weight;
 	}
 
-	outputBuffer[index] = (uchar)clamp(sum_r, 0.0f, 255.0f);	
-	outputBuffer[index+1] = (uchar)clamp(sum_g, 0.0f, 255.0f);
-	outputBuffer[index+2] = (uchar)clamp(sum_b, 0.0f, 255.0f);
+	outputBuffer[imgIndex] = (uchar)clamp(sum_r, 0.0f, 255.0f);	
+	outputBuffer[imgIndex+1] = (uchar)clamp(sum_g, 0.0f, 255.0f);
+	outputBuffer[imgIndex+2] = (uchar)clamp(sum_b, 0.0f, 255.0f);
 	if(channels == 4) {
-		outputBuffer[index+3] = inputBuffer[index+3];
+		outputBuffer[imgIndex+3] = inputBuffer[imgIndex+3];
 	}	
 }
